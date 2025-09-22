@@ -43,15 +43,17 @@ std::vector<Token> split(std::string &s) {
   std::string token = "";
 
   for (int i = 0; i < s.length(); i++) {
-    if (s[i] == DELIMITER && token != "") {
+    if (s[i] == DELIMITER ) {
+      std::cout << "Pushing -> " << token << "\n";
       tokens.push_back(tokenMatcher(token));
       token = "";
     } else if (s[i] == END_TOKEN) {
       break;
-    } else if (QUOTES.find(s[i]) != QUOTES.end()) {
+    } else if (s[i] == '"') {
       tokens.push_back({"QUOTES", std::string(1, s[i])});
     } else {
       token += s[i];
+    
     }
   }
 
@@ -61,7 +63,10 @@ std::vector<Token> split(std::string &s) {
   }
 
   tokens.push_back(tokenMatcher(";"));
-  std::cout << "Tokens extracted -> :\n";
+
+  for (auto t : tokens) {
+    std::cout << "[" << t.value << "]\n";
+  }
   return tokens;
 }
 
@@ -92,17 +97,13 @@ IntStatus intParser(std::string &s) {
 StringStatus stringParser(std::vector<Token> &tokens) {
   std::string parsedStr;
 
-  // char quote_opening = std::string::c_str(tokens[0].value)
   const char *opening_quote = tokens[0].value.c_str();
   const char *closing_quote = tokens[tokens.size() - 2].value.c_str();
-  // dereferencing the char pointers
   if (QUOTES.find(*opening_quote) == QUOTES.end() &&
       QUOTES.find(*closing_quote) == QUOTES.end()) {
-    std::cout << "Could not find opening and closing quotes\n";
     std::cout << "Invalid syntax, did you forget to insert opening and closing "
                  "quotes?\n";
-    return {false, 1,
-            ""}; // try and send the malformed string declaration instead
+    return {false, 1, ""};
   }
 
   for (size_t i = 0; i < tokens.size(); i++) {
