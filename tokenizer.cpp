@@ -43,17 +43,20 @@ std::vector<Token> split(std::string &s) {
   std::string token = "";
 
   for (int i = 0; i < s.length(); i++) {
-    if (s[i] == DELIMITER ) {
-      std::cout << "Pushing -> " << token << "\n";
+    if (s[i] == DELIMITER) {
       tokens.push_back(tokenMatcher(token));
       token = "";
     } else if (s[i] == END_TOKEN) {
       break;
     } else if (s[i] == '"') {
+      if (!token.empty()) {
+        tokens.push_back(tokenMatcher(token));
+        token = "";
+      }
+
       tokens.push_back({"QUOTES", std::string(1, s[i])});
     } else {
       token += s[i];
-    
     }
   }
 
@@ -63,10 +66,6 @@ std::vector<Token> split(std::string &s) {
   }
 
   tokens.push_back(tokenMatcher(";"));
-
-  for (auto t : tokens) {
-    std::cout << "[" << t.value << "]\n";
-  }
   return tokens;
 }
 
@@ -85,7 +84,7 @@ struct StringStatus {
 IntStatus intParser(std::string &s) {
   std::string parsedNumber;
   for (int i = 0; i < s.length(); i++) {
-    if (!std::isdigit(s[i])) {
+    if (!std::isdigit(s[i]) && s[i] != '.') {
       return {false, 1};
     }
 
@@ -106,9 +105,15 @@ StringStatus stringParser(std::vector<Token> &tokens) {
     return {false, 1, ""};
   }
 
-  for (size_t i = 0; i < tokens.size(); i++) {
+  for (size_t i = 0; i < tokens.size() - 2; i++) {
     parsedStr += tokens[i].value;
+    if (i != 0 || tokens[i].value != std::string(1, '"')) {
+      parsedStr.append(1, ' ');
+    }
   }
+
+  parsedStr.append(1, *tokens[tokens.size() - 2].value.c_str());
+  parsedStr.append(1, *tokens[tokens.size() - 1].value.c_str());
 
   return {true, 0, parsedStr};
 }
@@ -119,17 +124,16 @@ bool parse(std::vector<Token> &tokens) {
       (tokens[3].type == "QUOTES" || tokens[3].type == "userDef")) {
 
     if (tokens[0].value == "int") {
-      std::cout << "Checking type declaration for integer type\n";
+      std::cout << "type::int\n";
       IntStatus status = intParser(tokens[3].value);
       if (!status.ok) {
+        std::cout << "Invalid syntax\n";
         return status.ok;
       }
 
       std::cout << "Integer declared -> " << status.value << " \n";
     } else if (tokens[0].value == "string") {
-      // so this one, we'd actually want to get from the third token till the
-      // end
-      std::cout << "Checking type declaration for string\n";
+      std::cout << "type::string\n";
       // copying original vector but starting from the 3rd token instead
       auto slice = std::vector<Token>(tokens.begin() + 3, tokens.end());
       StringStatus status = stringParser(slice);
@@ -138,9 +142,8 @@ bool parse(std::vector<Token> &tokens) {
       }
 
       auto result = status.value;
-      std::cout << "Extracted String -> \n" << result << "\n";
+      std::cout << "result -> " << result << "\n";
     }
-    std::cout << "Valid syntax\n";
     return true;
   }
 
