@@ -23,10 +23,18 @@ void shape() {
   char balls[] = "balls";
   printf("%lu\n",sizeof(balls));
   printf("thats because, since these characters are laid in a contiguous memory, there needs to be an end to it\n");
-  printf("an escape sequence is provided :\\, which is a null byte character, represented as: \0   \n");
+  // printf("an escape sequence is provided :\\, which is a null byte character, represented as: \0   \n");
 }
 
+void userInput() {
+  char input[30];
+  // https://man7.org/linux/man-pages/man3/fgets.3p.html
+  printf("Enter full show: \n");
+  // fgets(char *store[], n bytes, src)
+  fgets(input, 30, stdin);
+  printf("input read from stdin -> %s", input);
+}
 int main() {
-  shape();
+  userInput();
   return 0;
 }
