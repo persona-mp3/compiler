@@ -7,7 +7,7 @@
 #define ASSIGNMENT_TOKEN 1
 #define DELIMITER_TOKEN 2
 #define VALUE_TOKEN 3
-#define IDENTIFIER_TOKEN 4
+#define KEYWORD_TOKEN 4
 #define UNIDENTIED_TOKEN -1
 
 const char INT_LIT[] = "int";
@@ -15,7 +15,11 @@ const char STR_LIT[] = "string";
 const char BOOL_LIT[] = "bool";
 const char ASSIGNMENT_LIT[] = "=";
 const char DELIMETER_LIT[] = ";";
-const char FN_LIT[] = "fn";
+const char FN_KWD[] = "fn";
+const char CLASS_KWD[] = "class";
+const char CONST_KWD[] = "const";
+
+const char KEYWORDS[][29] = {"class", "const", "fn", "help"};
 
 typedef struct {
   int kind;
@@ -48,6 +52,24 @@ bool assignToken(char *str[], Token *t) {
   return false;
 }
 
+bool keywordTokenizer(char *str[], Token *t) {
+  if (strcmp(*str, FN_KWD) == 0) {
+    t->kind = KEYWORD_TOKEN;
+    strcpy(t->val, *str);
+  } else if (strcmp(*str, CLASS_KWD) == 0) {
+    t->kind = KEYWORD_TOKEN;
+    strcpy(t->val, *str);
+  } else if (strcmp(*str, CONST_KWD) == 0) {
+    t->kind = KEYWORD_TOKEN;
+    strcpy(t->val, *str);
+  } else {
+    printf("keyword token failed for: %s\n", *str);
+    return false;
+  }
+
+  return true;
+}
+
 void delimiterToken(char *str[], Token *t) {
   if (strcmp(*str, DELIMETER_LIT) == 0) {
     t->kind = DELIMITER_TOKEN;
@@ -56,17 +78,38 @@ void delimiterToken(char *str[], Token *t) {
   }
   printf("[?] delimeterToken failed for -> %s\n", *str);
   t->kind = UNIDENTIED_TOKEN;
-	strcpy(t->val, "UID");
+  strcpy(t->val, "UID");
   return;
 }
 
 Token Factory(char *str) {
   Token token;
-	if (typeToken(&str, &token)) return token;
-	if (assignToken(&str, &token)) return token;
-	delimiterToken(&str, &token);
+  if (typeToken(&str, &token))
+    return token;
+  if (assignToken(&str, &token))
+    return token;
+  if (keywordTokenizer(&str, &token))
+    return token;
+  delimiterToken(&str, &token);
   return token;
 }
+
+/*
+ * So we can have the following types of tokens:
+ * - Type token (
+ *   int, string, bool, char,
+ *   void,
+ *   )
+ * - Assignment token(=)
+ * - Delimeter token(;)
+ * - VariableName token
+ * - keywords token
+ *   (
+ *   	fn, class, if, else, const,
+ *   )
+ *
+ *   strcopy(char *dst, const char *src)
+ * */
 
 /*
  * So we can have somewhat of a factory patttern????

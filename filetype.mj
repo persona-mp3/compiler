@@ -1,1 +1,2 @@
-bool string = ;
+
+const constFile = " Const KeyWord ";

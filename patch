@@ -27,3 +27,21 @@ int readfile(char *filename[]) {
      Factory(&word);
   
    }
+int readFile(char *fileName[]) {
+  FILE *fptr;
+  fptr = fopen(*fileName, "r");
+  if (!fptr) {
+    printf("[x] failed to open file\n");
+    return EXIT_FAILURE;
+  }
+
+  char word[1024];
+  Token token;
+
+  while (fscanf(fptr, "%1023s", word) == 1) {
+    token = Factory(word);
+    printf("Token -> %s | Value: %d\n", token.val, token.kind);
+  }
+  return EXIT_SUCCESS;
+}
+
