@@ -13,26 +13,13 @@
  *
  *   strcopy(char *dst, const char *src)
  * */
-// #define TYPE_TOKEN 0
-// #define ASSIGNMENT_TOKEN 1
-// #define DELIMETER_TOKEN 2
-// #define VALUE_TOKEN 3
-// #define IDENTIFIER_TOKEN 4
-// #define UNIDENTIFIED -1
-//
-// const char INT_LIT[] = "int";
-// const char STR_LIT[] = "string";
-// const char BOOL_LIT[] = "bool";
-// const char ASSIGNEMT_LIT[] = "=";
-// const char DELIMETER_LIT[] = ";";
-// const char FN_LIT[] = "fn";
-//
+
 typedef struct {
   int kind;
-  char val[];
+  char val[100];
 } Token;
 
-Token Factory(char *str[]);
+Token Factory(char *str);
 
 int readFile(char *fileName[]) {
   FILE *fptr;
@@ -42,15 +29,13 @@ int readFile(char *fileName[]) {
     return EXIT_FAILURE;
   }
 
-  char *word[1024];
+  char word[1024];
   Token token;
 
-  while (fscanf(fptr, "%1023s", *word)) {
-    puts(*word);
-    printf("new token -> %s, %d", token.val, token.kind);
+  while (fscanf(fptr, "%1023s", word) == 1) {
     token = Factory(word);
+    printf("Token -> %s | Value: %d\n", token.val, token.kind);
   }
-  printf("new token -> %s, %d", token.val, token.kind);
   return EXIT_SUCCESS;
 }
 
@@ -58,10 +43,6 @@ int main(int argc, char *argv[]) {
   if (argc < 2) {
     printf("enter filepath to read\n");
     return 0;
-  }
-
-  for (int i = 0; i < argc; i++) {
-    printf("arg[%d] -> %s\n", i, argv[i]);
   }
   readFile(&argv[1]);
   return 0;

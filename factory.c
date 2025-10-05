@@ -19,24 +19,20 @@ const char FN_LIT[] = "fn";
 
 typedef struct {
   int kind;
-  char val[];
+  char val[100];
 } Token;
 
 bool typeToken(char *str[], Token *t) {
   if (strcmp(*str, INT_LIT) == 0) {
-    printf("t is int-type\n");
     t->kind = 0;
     strcpy(t->val, *str);
   } else if (strcmp(*str, STR_LIT) == 0) {
-    printf("t is str-type\n");
     t->kind = 0;
     strcpy(t->val, *str);
   } else if (strcmp(*str, BOOL_LIT) == 0) {
-    printf("t is %s\n", BOOL_LIT);
     t->kind = 0;
     strcpy(t->val, *str);
   } else {
-    printf("[?] unidentified token literal -> %s\n", *str);
     return false;
   }
 
@@ -45,42 +41,30 @@ bool typeToken(char *str[], Token *t) {
 
 bool assignToken(char *str[], Token *t) {
   if (strcmp(*str, ASSIGNMENT_LIT) == 0) {
-    printf("assignment token found -> %s", *str);
     t->kind = ASSIGNMENT_TOKEN;
     strcpy(t->val, *str);
     return true;
   }
-  printf("[?] unidentified token literal, assignmentToken failed -> %s\n",
-         *str);
   return false;
 }
 
 void delimiterToken(char *str[], Token *t) {
   if (strcmp(*str, DELIMETER_LIT) == 0) {
-    printf("delimiter token found -> %s", *str);
     t->kind = DELIMITER_TOKEN;
     strcpy(t->val, *str);
     return;
   }
-  printf("[?] unidentified token literal, delimeterToken failed -> %s\n", *str);
+  printf("[?] delimeterToken failed for -> %s\n", *str);
   t->kind = UNIDENTIED_TOKEN;
+	strcpy(t->val, "UID");
   return;
 }
 
-Token Factory(char *str[]) {
+Token Factory(char *str) {
   Token token;
-
-  while (true) {
-    if (typeToken(str, &token)) {
-      break;
-    } else if (assignToken(str, &token)) {
-      break;
-    } else {
-      delimiterToken(str, &token);
-    };
-
-    break;
-  }
+	if (typeToken(&str, &token)) return token;
+	if (assignToken(&str, &token)) return token;
+	delimiterToken(&str, &token);
   return token;
 }
 
