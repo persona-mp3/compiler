@@ -1,0 +1,29 @@
+int readfile(char *filename[]) {
+  printf("[*] reading file %s\n\n", *filename);
+  FILE *fptr;
+  fptr = fopen(*filename, "r");
+  if (!fptr) {
+    printf("Could not get file %s\n", *filename);
+    return EXIT_FAILURE;
+  }
+
+  char file_content[200];
+  while ((fgets(file_content, sizeof(file_content), fptr)) != NULL) {
+    printf(" -> %s \n", file_content);
+  }
+  printf("done reading file into buf\n");
+
+  return EXIT_SUCCESS;
+}
+
+
+-- Why isn't it possible -> Patrick Bateman
+
+	 Factory(char *str[])
+   char word[1024];
+  
+   while (fscanf(fptr, "%1023s", word)) {
+     puts(word);
+     Factory(&word);
+  
+   }
