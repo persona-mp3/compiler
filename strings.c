@@ -109,7 +109,7 @@ void splitToArr(char *src) {
 }
 
 int main(int argc, char *argv[]) {
-  char *test = "american idiot Green Daty";
+  char *test = "american idiot Green Dat        romeo ";
   // char *test = "america idiot";
   splitToArr(test);
   return 0;
