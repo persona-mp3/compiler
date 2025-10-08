@@ -2,8 +2,7 @@
 
 
 # target_branch=git branch -a | fzf
-curr_branches=$(git branch)
-target=$(git branch  | fzf --height=40%  --margin=20% --tmux 30% --border)
+target=$(git branch  |  sed 's/* //' |fzf --height=40%  --margin=20% --tmux 30% --border)
 if [  $? -ne 0  ]; then
 	echo "fzf got cancelled"
 	exit
@@ -14,6 +13,4 @@ if [[ -z $target ]]; then
 	exit
 fi
 
-echo "$target"
-operation=$(git checkout $target)
-# echo "$operation"
+operation=$(git switch $target)
