@@ -25,8 +25,7 @@ void reader(const char fname[]) {
   return;
 }
 
-int file_reader(const char fname[]) 
-{
+int file_reader(const char fname[]) {
 
   // https://man7.org/linux/man-pages/man2/stat.2.html
   struct stat file_stat;
@@ -39,7 +38,7 @@ int file_reader(const char fname[])
   size_t file_size = file_stat.st_size;
   printf("size -> %lli\n", file_stat.st_size);
   char *buffer = malloc(file_size + 1);
-  if (!buffer){
+  if (!buffer) {
     printf("error in allocating memory for file of size -> %lu\n", file_size);
     printf("e -> %d\n", errno);
     perror("e :");
@@ -58,7 +57,7 @@ int file_reader(const char fname[])
 
   printf("reading from file\n");
   // fread(*buffer, element_size, n_elements,src)
-  size_t bytes_read = fread(buffer, 1, file_size,fptr);
+  size_t bytes_read = fread(buffer, 1, file_size, fptr);
   fclose(fptr);
 
   buffer[bytes_read] = '\0';
