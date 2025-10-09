@@ -1,77 +1,98 @@
-#include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/stat.h>
 
-void reader(const char fname[]) {
-  FILE *fptr;
-  fptr = fopen(fname, "r+");
-  if (!fptr) {
-    printf("error_n -> %d\n", errno);
-    perror("error: ");
-    return;
+#include "utils.h"
+
+FILE *readFile(char *name);
+int doStuff(FILE *fptr, char *fName);
+bool lexer(FILE *f);
+
+int main(int argc, char *argv[]) {
+  if (argc < 2) {
+    printf("enter file path to read\n");
+    return -1;
   }
 
-  // so there are a couple of unknowns here,
-  // we need to know the size of the file, before allocating space for its
-  // content it could be 500bytes or more , before we can hash the content
-  char line[255];
-  while (fgets(line, sizeof(line) + 1, fptr)) {
-    printf("%s", line);
-  }
-  fclose(fptr);
+  char *fileName = argv[1];
+  FILE *f = readFile(fileName);
+  if (!f) {
 
-  return;
-}
-
-int file_reader(const char fname[]) {
-
-  // https://man7.org/linux/man-pages/man2/stat.2.html
-  struct stat file_stat;
-  if (stat(fname, &file_stat) == -1) {
-    printf("error_n -> %d\n", errno);
-    perror("error: ");
-    return EXIT_FAILURE;
+    return -1; // could've returned the error here
   }
 
-  size_t file_size = file_stat.st_size;
-  printf("size -> %lli\n", file_stat.st_size);
-  char *buffer = malloc(file_size + 1);
-  if (!buffer) {
-    printf("error in allocating memory for file of size -> %lu\n", file_size);
-    printf("e -> %d\n", errno);
-    perror("e :");
-    return EXIT_FAILURE;
-  }
+  doStuff(f, fileName);
 
-  FILE *fptr;
-  fptr = fopen(fname, "rb");
-  if (!fptr) {
-    printf("error in opening file %s\n", fname);
-    printf("e -> %d\n", errno);
-    perror("e :");
-    free(buffer);
-    return EXIT_FAILURE;
-  }
-
-  printf("reading from file\n");
-  // fread(*buffer, element_size, n_elements,src)
-  size_t bytes_read = fread(buffer, 1, file_size, fptr);
-  fclose(fptr);
-
-  buffer[bytes_read] = '\0';
-
-  free(buffer);
   return EXIT_SUCCESS;
 }
 
-int main() {
-  printf("renoc\n\n");
-  char fname[30];
-  printf("file_name -> ");
-  scanf("%s", fname);
+/*
+ * readFile opens the file in rb mode and returns pointer to the file
+ * to the caller, who is responsible for closing the file.
+ * */
+FILE *readFile(char *name) {
+  FILE *fptr;
 
-  file_reader(fname);
-  return 0;
+  fptr = fopen(name, "r");
+  if (!fptr) {
+    printf("could not open file %s\n", name);
+    return NULL;
+  }
+
+  return fptr;
 }
+
+int doStuff(FILE *fptr, char *fName) {
+  struct stat fileInfo;
+  if (stat(fName, &fileInfo) != 0) {
+    printf("error getting stat info for %s\n", fName);
+    perror("e-> :");
+    return EXIT_FAILURE;
+  };
+
+  if (!fptr) {
+    printf("WHAT?? Get the fck outta here, want to get with a segfault\n");
+    perror("e-> :");
+    return EXIT_FAILURE;
+  }
+
+  int fileSize = fileInfo.st_size;
+  // process file in chunks
+  int CHUNK = 1023;
+  size_t bytesRead;
+  // fread(dest, rate, dest(size), src)
+  fclose(fptr);
+
+  bool isWhat = lexer(fptr);
+  return EXIT_SUCCESS;
+}
+
+// so we could just vlose the buffer from there
+bool lexer(FILE *f) {
+
+  char *line = NULL;
+  size_t limit = 0;
+  char **c;
+  int sucess;
+  perror("insidelexer-> :");
+  while ((sucess = getline(&line, &limit, f)) != -1) {
+    if (!line) {
+      printf("im going to shoot myself in the foot, line is null");
+      perror("e-> :");
+      return false;
+    }
+    c = toArray(line);
+    printf("we splliting to array???\n");
+
+    printf("\n\noi\n");
+    perror("insideLoopLexer-> :");
+    break;
+  }
+
+  // free(c);
+  fclose(f);
+  return true;
+}
+
+// MASSIVE SEGAULR
