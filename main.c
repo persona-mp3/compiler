@@ -62,31 +62,34 @@ int doStuff(FILE *fptr, char *fName) {
   int CHUNK = 1023;
   size_t bytesRead;
   // fread(dest, rate, dest(size), src)
-  fclose(fptr);
 
   bool isWhat = lexer(fptr);
   return EXIT_SUCCESS;
 }
 
 // so we could just vlose the buffer from there
+typedef struct {
+  char *value;
+  int id;
+} Tokens;
+
 bool lexer(FILE *f) {
 
   char *line = NULL;
   size_t limit = 0;
   char **c;
   int sucess;
-  perror("insidelexer-> :");
   while ((sucess = getline(&line, &limit, f)) != -1) {
     if (!line) {
-      printf("im going to shoot myself in the foot, line is null");
+      printf("footGun!!, line is null\n");
       perror("e-> :");
       return false;
     }
     c = toArray(line);
-    printf("we splliting to array???\n");
-
-    printf("\n\noi\n");
-    perror("insideLoopLexer-> :");
+    printf("sizeof %lu\n", sizeof(c));
+    for (int i = 0; i < sizeof(c); i++) {
+      printf("%s\n", c[i]);
+    }
     break;
   }
 
